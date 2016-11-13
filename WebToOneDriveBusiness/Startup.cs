@@ -39,6 +39,7 @@ namespace WebToOneDriveBusiness
             //TK: Required
             services.AddAuthentication(sharedOptions => sharedOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
 
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +59,7 @@ namespace WebToOneDriveBusiness
             }
 
             app.UseStaticFiles();
+            app.UseSession(new SessionOptions { IdleTimeout = TimeSpan.FromMinutes(30) });
 
             //TK: Required
             // Configure the OWIN pipeline to use cookie auth.
@@ -70,8 +72,9 @@ namespace WebToOneDriveBusiness
             app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
                 ClientId = Configuration["AzureAD:ClientId"],
                 Authority = "https://login.microsoftonline.com/common/v2.0", // String.Format(Configuration["AzureAd:AadInstance"], Configuration["AzureAd:Tenant"]),
-                ResponseType = OpenIdConnectResponseType.CodeIdToken, //What I will get
+                //ResponseType = OpenIdConnectResponseType.CodeIdToken, //What I will get
                 PostLogoutRedirectUri = Configuration["AzureAd:PostLogoutRedirectUri"],
+                //RedirectUri
                 Scope = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" },
                 TokenValidationParameters = new TokenValidationParameters {
                     // instead of using the default validation (validating against a single issuer value, as we do in line of business apps), 
@@ -106,15 +109,16 @@ namespace WebToOneDriveBusiness
             var appSecret = Configuration["AzureAD:ClientSecret"];
             var code = context.ProtocolMessage.Code;
             string signedInUserID = context.Ticket.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string[] scopes = { "User.Read", "Mail.Send", "User.ReadWrite" };
+
             ConfidentialClientApplication cca = new ConfidentialClientApplication(
                 appId,
                 redirectUri,
                 new ClientCredential(appSecret),
                 new SessionTokenCache(signedInUserID, context.HttpContext));
-            string[] scopes = { "User.Read", "Mail.Send", "User.ReadWrite" };
 
             AuthenticationResult result = await cca.AcquireTokenByAuthorizationCodeAsync(scopes, code);
-            PLUGIN SIE NIE WCZYTUJE
+            //PLUGIN SIE NIE WCZYTUJE
             //var authorizationCode = context.ProtocolMessage.Code;
             //var tenantID = "tkopaczmsE3.onmicrosoft.com";
             //var authority = "https://login.microsoftonline.com/" + tenantID;

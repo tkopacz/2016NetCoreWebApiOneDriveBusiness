@@ -19,5 +19,9 @@
     <DnxInvisibleContent Include="bower.json" />
     <DnxInvisibleContent Include=".bowerrc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\microsoft-authentication-library-for-dotnet\src\MSAL.PCL.CoreCLR\MSAL.PCL.CoreCLR.csproj" />
+    <ProjectReference Include="..\microsoft-authentication-library-for-dotnet\src\MSAL.PCL\MSAL.PCL.csproj" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>
