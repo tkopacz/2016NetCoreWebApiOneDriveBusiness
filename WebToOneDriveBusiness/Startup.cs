@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Microsoft.Identity.Client;
 
 namespace WebToOneDriveBusiness
 {
@@ -67,10 +69,10 @@ namespace WebToOneDriveBusiness
             // Configure the OWIN pipeline to use OpenID Connect auth.
             app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
                 ClientId = Configuration["AzureAD:ClientId"],
-                Authority = String.Format(Configuration["AzureAd:AadInstance"], Configuration["AzureAd:Tenant"]),
+                Authority = "https://login.microsoftonline.com/common/v2.0", // String.Format(Configuration["AzureAd:AadInstance"], Configuration["AzureAd:Tenant"]),
                 ResponseType = OpenIdConnectResponseType.CodeIdToken, //What I will get
                 PostLogoutRedirectUri = Configuration["AzureAd:PostLogoutRedirectUri"],
-                Scope = { "openid", "email", "profile", "offline_access" },
+                Scope = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" },
                 TokenValidationParameters = new TokenValidationParameters {
                     // instead of using the default validation (validating against a single issuer value, as we do in line of business apps), 
                     // we inject our own multitenant validation logic
@@ -99,6 +101,35 @@ namespace WebToOneDriveBusiness
         }
 
         private async Task CodeReceived(AuthorizationCodeReceivedContext context) {
+            var appId = Configuration["AzureAD:ClientId"];
+            var redirectUri = Configuration["AzureAD:RedirectUri"];
+            var appSecret = Configuration["AzureAD:ClientSecret"];
+            var code = context.ProtocolMessage.Code;
+            string signedInUserID = context.Ticket.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ConfidentialClientApplication cca = new ConfidentialClientApplication(
+                appId,
+                redirectUri,
+                new ClientCredential(appSecret),
+                new SessionTokenCache(signedInUserID, context.HttpContext));
+            string[] scopes = { "User.Read", "Mail.Send", "User.ReadWrite" };
+
+            AuthenticationResult result = await cca.AcquireTokenByAuthorizationCodeAsync(scopes, code);
+            PLUGIN SIE NIE WCZYTUJE
+            //var authorizationCode = context.ProtocolMessage.Code;
+            //var tenantID = "tkopaczmsE3.onmicrosoft.com";
+            //var authority = "https://login.microsoftonline.com/" + tenantID;
+            //var resourceID = "https://graph.microsoft.com"; // App ID URI
+
+            //var clientId = Configuration["AzureAD:ClientId"];
+            //var clientSecret = Configuration["AzureAD:ClientSecret"];
+            //var redirectUri = Configuration["AzureAD:RedirectUri"];
+
+            //ClientCredential credential = new ClientCredential(clientId, clientSecret);
+
+            //AuthenticationContext authContext = new AuthenticationContext(authority,false);//, tokenCache);
+            //AuthenticationResult authResult = 
+            //    await authContext.AcquireTokenByAuthorizationCodeAsync(
+            //    authorizationCode, new Uri(redirectUri), credential, resourceID);
             //string signedInUserID = context.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
             //ConfidentialClientApplication cca = new ConfidentialClientApplication(
             //    appId,
