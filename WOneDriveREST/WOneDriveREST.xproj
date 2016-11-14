@@ -6,8 +6,8 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>e55c57c6-6ef4-4ab6-9d66-faab68638360</ProjectGuid>
-    <RootNamespace>WebToOneDriveBusiness</RootNamespace>
+    <ProjectGuid>9307b292-1f54-4a78-95c0-650def6513ac</ProjectGuid>
+    <RootNamespace>WOneDriveREST</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
