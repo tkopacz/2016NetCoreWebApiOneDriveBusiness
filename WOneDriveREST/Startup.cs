@@ -30,6 +30,8 @@ namespace WOneDriveREST
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddSession();
+
             services.AddMvc();
         }
 
@@ -52,13 +54,19 @@ namespace WOneDriveREST
             app.UseStaticFiles();
 
 
-            app.UseCookieAuthentication();
+            app.UseSession(new SessionOptions { IdleTimeout = TimeSpan.FromMinutes(30) });
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions {
+            }
+            );
 
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectOptions() {
+                    SignInScheme = "WTK",
                     ClientId = "8a59a106-9a87-4331-98d9-65c34d6392d0",
                     Authority = "https://login.microsoftonline.com/common/v2.0",
                     Scope = { "openid", "email", "profile", "offline_access" },
+                    PostLogoutRedirectUri = "http://localhost:2935",
                     TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() {
                         ValidateIssuer = false
                     },
