@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WOneDriveREST
 {
@@ -49,12 +51,41 @@ namespace WOneDriveREST
 
             app.UseStaticFiles();
 
+
+            app.UseCookieAuthentication();
+
+            app.UseOpenIdConnectAuthentication(
+                new OpenIdConnectOptions() {
+                    ClientId = "8a59a106-9a87-4331-98d9-65c34d6392d0",
+                    Authority = "https://login.microsoftonline.com/common/v2.0",
+                    Scope = { "openid", "email", "profile", "offline_access" },
+                    TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() {
+                        ValidateIssuer = false
+                    },
+                    Events = new OpenIdConnectEvents {
+                        OnRemoteFailure = OnAuthenticationFailed,
+                        OnTokenValidated = OnToken,
+                        OnAuthorizationCodeReceived = CodeReceived
+                    }
+                }
+
+                );
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task CodeReceived(AuthorizationCodeReceivedContext arg) {
+        }
+
+        private async Task OnToken(TokenValidatedContext arg) {
+        }
+
+        private async Task OnAuthenticationFailed(FailureContext arg) {
         }
     }
 }
