@@ -116,7 +116,26 @@ namespace WOneDriveREST
             //clt.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", "TRmohJkVTKoufpbcxmdyRv0");
             clt.BaseAddress = new Uri("https://login.microsoftonline.com/common/oauth2/v2.0/token");
             /*
-             * 
+Accept: application/json
+x-client-SKU: MSAL.Desktop
+x-client-Ver: 1.0.0.0
+x-client-CPU: x64
+x-client-OS: Microsoft Windows NT 10.0.14393.0
+client-request-id: b461dc4d-c545-40e1-bb31-7149753413c6
+return-client-request-id: true
+Content-Type: application/x-www-form-urlencoded
+Host: login.microsoftonline.com
+Content-Length: 1504
+Expect: 100-continue
+
+            
+scope=openid+email+profile+offline_access&
+client_id=8a59a106-9a87-4331-98d9-65c34d6392d0&
+client_secret=TRmohJkVTKoufpbcxmdyRv0&
+grant_type=authorization_code&
+redirect_uri=http%3A%2F%2Flocalhost%3A2935%2Fsignin-oidc&
+code=OAQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ4FGhjhbI-Vy_FsjmcrPA8cYIiVSxviB-kndVA7zdLyjAUreLnL8tQQ550pQold4-M3cR0Xifjjk2K6wgkQjylCikrwqYg9039M_OgixDhzOKI-jc83b4SIRtjSB9Gz5bHR36AGVppaHQMbxbkyYb4Swx3p12mmE0ypvJqloFZ0AL75fexMzLUvpgD91ZDkNRUwn_ErqKlaNwH5b6BgiXitfk4iRb0BXP7m-NdUoVtVl7qnKREztO5A-cKEOVkHS5VQq5cJEUay3jEhs_fj_IlefPvx1KGHg08v6nGmj5VjhRDynCnrT2SpFiiuDPTIpmDrxTKOuStNJxwsREnLfeVcawGdKanW5Je7BayCwiaO0bwSvxnNgn1lk-yaXMLo6yQwRdJfeaa2nsyklFUMnJPcUCZPBNXO_xq7ka11BeRO7Z3I6nmaUwOLsI7yvC02ss_6xDmVZ26lDIEjP9vCISWBzIBUSlZ9IElRGyvKctMYb0ZLHtkadBVmBoEqzK4b03zrlbObwOBF9HFdQDv0QGD9_2WrRZTedgZvaF27GVuPTihLWkcp8h-L-Fu-77LnnFDjkuOobmBG2a33wsI1BnqEhgmPgrF0Vy6a9MHqkIeglOXgvL3QwP1DtdJd11vXW56RoDQBnUxOM-Nnj95-uqnD0BcKQYswDasn4RKLQQiscsF4mfcLACGR2vH6M4gtIOMre5U25DyVisC0TmY0zQnmy17PkI4PnIbZ1mna5H-FsZpPVPq7YrbFI8AzvlbaR0MhAf0PVYpH5SznRhddI7tvoI8I3QvRMNvzIV9E554Wxh38ZMD_0wizElollw59cf5Jq595ypmVTRvFe7yeJeOHWg0sEomeRHXTrS28xso6b4MsuXIbnryv-spBkdx3v4FDzx9grpkwZGLDsqKHIRAa9bu8lQukcallYZVfC7ZGtPwBR4-EiKJMPPUCZh4WQyR95IgDpewGbiAMXm__rhmddlFnptlitfTXg2yXZ6rwPpEIo-PwRGNEh1G7mV526NVWi_g3-Ng5kODLwQWWZTaLX3e5-A1zomyVOOLr-tTgyRyiu00bcGh7nxGz0C9kFnAcMlM4UAp7FqORt4eqsBllUKzsCsqXeNiGYdoVkoI3rqklfDTZjQ-RODT1UJKY6HNIvDJ8qQuxeX-Vx38grzxsN_EyYs6Dss9BrU479gaF27FQK3a9A7iP6tIIHrndL5Px6xwPOJctDTCvd8K42JCCAA
+
             */
             //clt.DefaultRequestHeaders.Con
             List<Param> lst = new List<WOneDriveREST.Param>();
