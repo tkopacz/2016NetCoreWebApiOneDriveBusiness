@@ -9,6 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.Identity.Client;
+using WOneDriveREST.Helper;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 
 namespace WOneDriveREST
 {
@@ -31,7 +38,9 @@ namespace WOneDriveREST
         {
             // Add framework services.
             services.AddSession();
-
+            services.AddOptions();
+            //TK: Required
+            services.AddAuthentication(sharedOptions => sharedOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
             services.AddMvc();
         }
 
@@ -56,17 +65,23 @@ namespace WOneDriveREST
 
             app.UseSession(new SessionOptions { IdleTimeout = TimeSpan.FromMinutes(30) });
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions {
-            }
-            );
+            app.UseCookieAuthentication(new CookieAuthenticationOptions() {
+                AutomaticAuthenticate = true,
+                CookieName = "MyApp",
+                AuthenticationScheme = "Cookies"
+            });
+            //app.UseIdentity();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap = new Dictionary<string, string>();
 
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectOptions() {
-                    SignInScheme = "WTK",
                     ClientId = "8a59a106-9a87-4331-98d9-65c34d6392d0",
                     Authority = "https://login.microsoftonline.com/common/v2.0",
-                    Scope = { "openid", "email", "profile", "offline_access" },
+                    Scope = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" },
+                    //Scope = { "openid", "email", "profile", "offline_access" },
                     PostLogoutRedirectUri = "http://localhost:2935",
+                    ResponseType = OpenIdConnectResponseType.CodeIdToken,
                     TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() {
                         ValidateIssuer = false
                     },
@@ -88,6 +103,24 @@ namespace WOneDriveREST
         }
 
         private async Task CodeReceived(AuthorizationCodeReceivedContext arg) {
+            var code = arg.ProtocolMessage.Code;
+
+            HttpClient clt = new HttpClient();
+            clt.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", "TRmohJkVTKoufpbcxmdyRv0"));
+            clt.BaseAddress = new Uri("https://login.microsoftonline.com/common/oauth2/v2.0/token");
+            var cnt = new StringContent("");
+            var result = await clt.PostAsync("", cnt);
+
+            //string signedUserId = arg.Ticket.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //ConfidentialClientApplication cca;
+            //cca = new ConfidentialClientApplication(
+            //        "8a59a106-9a87-4331-98d9-65c34d6392d0",
+            //        "http://localhost:2935",
+            //        new ClientCredential("TRmohJkVTKoufpbcxmdyRv0"),
+            //        new SessionTokenCache(signedUserId, arg.HttpContext)
+            //    );
+            //string[] scopes = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" };
+            //AuthenticationResult result = await cca.AcquireTokenByAuthorizationCodeAsync(scopes, code);
         }
 
         private async Task OnToken(TokenValidatedContext arg) {
