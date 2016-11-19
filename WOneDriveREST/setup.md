@@ -1,4 +1,4 @@
-(https://apps.dev.microsoft.com)
+https://apps.dev.microsoft.com
 
 http://localhost:2935/
 
