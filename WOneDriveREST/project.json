@@ -24,7 +24,8 @@
       "version": "1.1.0-preview4-final",
       "type": "build"
     },
-    "Microsoft.AspNetCore.Session": "1.1.0"
+    "Microsoft.AspNetCore.Session": "1.1.0",
+    "Newtonsoft.Json": "9.0.1"
   },
 
   "tools": {

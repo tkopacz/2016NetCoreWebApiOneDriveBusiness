@@ -82,12 +82,6 @@
     <Compile Include="TokenCachePlugin.cs" />
     <Compile Include="WebUIFactory.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MSAL.PCL\MSAL.PCL.csproj">
-      <Project>{94569420-69b5-4031-a975-f5791e3f2f17}</Project>
-      <Name>MSAL.PCL</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
