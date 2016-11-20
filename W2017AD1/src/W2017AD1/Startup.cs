@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.AspNetCore.Authentication;
 using W2017AD1.Code;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace W2017AD1
 {
@@ -89,12 +90,30 @@ namespace W2017AD1
             {
                 ClientId = "39968e99-b355-4564-87d5-61f21fc54e5b",
                 ClientSecret = "9WuOAgd13PMssfw+CQH7W9pXo2iUtNbsuaa9N25eUV8=",
-                PostLogoutRedirectUri = "http://localhost:4104/",
-                Authority = "https://login.microsoftonline.com/common",
-                Scope = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" },
+                PostLogoutRedirectUri = "http://localhost:29271/",
+                //Authority = "https://login.microsoftonline.com/common",
+                Authority = "https://login.windows.net/tkopaczmse3.onmicrosoft.com",
+                Scope = { /*"User.Read", "Mail.Send", "User.ReadWrite", */"openid", "email", "profile", "offline_access" },
                 ResponseType = OpenIdConnectResponseType.CodeIdToken,
                 TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                 {
+                    RequireSignedTokens = false,
+                    AudienceValidator = (audiences, securityToken, validationParameters) =>
+                    {
+                        return true;
+                    },
+                    IssuerSigningKeyValidator = (securityKey, securityToken, validationParameters) =>
+                    {
+                        return true;
+                    },
+                    LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                    {
+                        return true;
+                    },
+                    SignatureValidator = (token, validationParameters) =>
+                    {
+                        return new JwtSecurityToken(token);
+                    },
                     IssuerValidator = (issuer, token, tvp) =>
                     {
                         if (CheckTenant(issuer, token))
@@ -123,9 +142,9 @@ namespace W2017AD1
         {
             var request = context.HttpContext.Request;
             var currentUri = UriHelper.BuildAbsolute(request.Scheme, request.Host, request.PathBase, request.Path);
-            var credential = new ClientCredential("7893fa6a-0222-4fc9-b3d8-0f2f7395f208", "yqLbazd5UcGbzjaFg8H2Hbf");
-            var authContext = new AuthenticationContext("https://login.microsoftonline.com/common/v2.0", AuthPropertiesTokenCache.ForCodeRedemption(context.Properties));
-            var resource = "openid+email+profile+offline_access"; //NO: This is for AD v1: "https://graph.windows.net";
+            var credential = new ClientCredential(context.Options.ClientId, context.Options.ClientSecret);
+            var authContext = new AuthenticationContext(context.Options.Authority, AuthPropertiesTokenCache.ForCodeRedemption(context.Properties));
+            var resource = "https://graph.windows.net";
 
             var result = await authContext.AcquireTokenByAuthorizationCodeAsync(
                 context.ProtocolMessage.Code, new Uri(currentUri), credential, resource);
@@ -133,7 +152,7 @@ namespace W2017AD1
             context.HandleCodeRedemption();
         }
 
-        private async Task OnToken(TokenValidatedContext arg)
+        private async Task OnToken(TokenValidatedContext context)
         {
         }
 
@@ -144,7 +163,11 @@ namespace W2017AD1
         private bool CheckTenant(string issuer, SecurityToken token)
         {
             //For Example - ususally DB or 
-            if (issuer != "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0") return false;
+            if (!(
+                  issuer == "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0" || //ms
+                  issuer == "https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/" || //ms
+                  issuer == "https://sts.windows.net/a07319e7-7cb1-41fe-9ebf-250e5deba957/" //tkopaczmse3
+                )) return false;
             return true;
         }
     }
