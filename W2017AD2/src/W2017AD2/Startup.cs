@@ -12,6 +12,12 @@ using Microsoft.Extensions.Logging;
 using W2017AD2.Data;
 using W2017AD2.Models;
 using W2017AD2.Services;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace W2017AD2
 {
@@ -75,14 +81,68 @@ namespace W2017AD2
 
             app.UseIdentity();
 
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            //  Update-Database before!
 
+            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
+                ClientId = "7893fa6a-0222-4fc9-b3d8-0f2f7395f208",
+                ClientSecret = "yqLbazd5UcGbzjaFg8H2Hbf",
+                PostLogoutRedirectUri = "http://localhost:4104/",
+                Authority = "https://login.microsoftonline.com/common/v2.0",
+                Scope = { "User.Read", "Mail.Send", "User.ReadWrite", "openid", "email", "profile", "offline_access" },
+                ResponseType = OpenIdConnectResponseType.CodeIdToken,
+                TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    IssuerValidator = (issuer, token, tvp) => {
+                        if (CheckTenant(issuer, token))
+                            return issuer;
+                        else
+                            throw new SecurityTokenInvalidIssuerException("Invalid issuer");
+                    },
+                },
+                Events = new OpenIdConnectEvents
+                {
+                    OnRemoteFailure = OnAuthenticationFailed,
+                    OnTokenValidated = OnToken,
+                    OnAuthorizationCodeReceived = CodeReceived
+                }
+
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task CodeReceived(AuthorizationCodeReceivedContext context)
+        {
+            var request = context.HttpContext.Request;
+            var currentUri = UriHelper.BuildAbsolute(request.Scheme, request.Host, request.PathBase, request.Path);
+            var credential = new ClientCredential("7893fa6a-0222-4fc9-b3d8-0f2f7395f208", "yqLbazd5UcGbzjaFg8H2Hbf");
+            var authContext = new AuthenticationContext("https://login.microsoftonline.com/common/v2.0", AuthPropertiesTokenCache.ForCodeRedemption(context.Properties));
+            var resource = "openid+email+profile+offline_access"; //NO: This is for AD v1: "https://graph.windows.net";
+
+            var result = await authContext.AcquireTokenByAuthorizationCodeAsync(
+                context.ProtocolMessage.Code, new Uri(currentUri), credential, resource);
+
+            context.HandleCodeRedemption();
+        }
+
+        private async Task OnToken(TokenValidatedContext arg)
+        {
+        }
+
+        private async Task OnAuthenticationFailed(FailureContext arg)
+        {
+        }
+
+        private bool CheckTenant(string issuer, SecurityToken token)
+        {
+            //For Example - ususally DB or 
+            if (issuer != "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0") return false;
+            return true;
         }
     }
 }
