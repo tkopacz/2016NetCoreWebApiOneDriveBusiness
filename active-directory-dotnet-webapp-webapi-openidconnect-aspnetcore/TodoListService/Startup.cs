@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TodoListService.Models;
 
 namespace TodoListService
 {
@@ -31,6 +32,8 @@ namespace TodoListService
 
             // Add Authentication services.
             services.AddAuthentication();
+
+            services.AddSingleton<TodoItemContainer>(new TodoItemContainer());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
