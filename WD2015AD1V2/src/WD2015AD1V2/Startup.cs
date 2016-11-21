@@ -11,6 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using W2015AD1V2.Code;
+using System.Net.Http;
+using System.Diagnostics;
 
 namespace WD2015AD1V2
 {
@@ -96,6 +101,35 @@ namespace WD2015AD1V2
                         context.HandleResponse(); // Suppress the exception
                         return Task.FromResult(0);
                     },
+                    OnAuthorizationCodeReceived = async (context) =>
+                    {
+                        var request = context.HttpContext.Request;
+                        var currentUri = UriHelper.BuildAbsolute(request.Scheme, request.Host, request.PathBase, request.Path);
+                        var credential = new ClientCredential(
+                            context.Options.ClientId,
+                            context.Options.ClientSecret);
+
+                        var authContext = new AuthenticationContext(
+                            context.Options.Authority,
+                            AuthPropertiesTokenCache.ForCodeRedemption(context.Properties));
+                        var resource = "https://graph.windows.net"; //"openid+email+profile+offline_access";//
+
+                        var result = await authContext.AcquireTokenByAuthorizationCodeAsync(
+                            context.ProtocolMessage.Code, new Uri(currentUri), credential, resource);
+
+
+                        //var bearer = result.AccessToken;
+
+                        //var clt = new HttpClient();
+                        //clt.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearer);
+                        //clt.BaseAddress = new Uri("https://graph.microsoft.com");
+                        //var resp = await clt.GetAsync("v1.0/me");
+                        //Debug.WriteLine(await resp.Content.ReadAsStringAsync());
+
+
+                        //context.HandleCodeRedemption();
+
+                    }
                     // If your application needs to do authenticate single users, add your user validation below.
                     //OnTokenValidated = (context) =>
                     //{
