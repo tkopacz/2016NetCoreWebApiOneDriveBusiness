@@ -113,14 +113,16 @@ namespace W2017AD1
             {
                 ClientId = "39968e99-b355-4564-87d5-61f21fc54e5b",
                 ClientSecret = "9WuOAgd13PMssfw+CQH7W9pXo2iUtNbsuaa9N25eUV8=",
-                PostLogoutRedirectUri = "/signed-out",
+                //PostLogoutRedirectUri = "/signed-out",
                 Authority = "https://login.microsoftonline.com/common",
+                CallbackPath="/signin-oidc",
                 //Authority = "https://login.windows.net/tkopaczmse3.onmicrosoft.com",
                 Scope = { /*"User.Read", "Mail.Send", "User.ReadWrite", */"openid", "email", "profile", "offline_access" },
                 ResponseType = OpenIdConnectResponseType.CodeIdToken,
                 GetClaimsFromUserInfoEndpoint = true,
                 TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                 {
+                    ValidateIssuer = false,
                     RequireSignedTokens = false,
                     //AudienceValidator = (audiences, securityToken, validationParameters) =>
                     //{
@@ -193,7 +195,7 @@ namespace W2017AD1
             Debug.WriteLine(await resp.Content.ReadAsStringAsync());
 
 
-            //context.HandleCodeRedemption();
+            context.HandleCodeRedemption();
         }
 
         private async Task OnToken(TokenValidatedContext context)
