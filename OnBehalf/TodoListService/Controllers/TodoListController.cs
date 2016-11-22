@@ -1,28 +1,46 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿//----------------------------------------------------------------------------------------------
+//    Copyright 2014 Microsoft Corporation
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//----------------------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+// The following using statements were added for this sample.
+using System.Collections.Concurrent;
+using TodoListService.Models;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using TodoListService.Models;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System.Globalization;
-using System.Threading;
-using System.Net.Http;
+using System.Configuration;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System.Web;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Threading;
+using TodoListService.DAL;
 
-// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TodoListService.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
-    public class TodoListController : Controller
+    public class TodoListController : ApiController
     {
-        TodoItemContainer m_container;
         //
         // The Client ID is used by the application to uniquely identify itself to Azure AD.
         // The App Key is a credential used by the application to authenticate to Azure AD.
@@ -30,39 +48,75 @@ namespace TodoListService.Controllers
         // The AAD Instance is the instance of Azure, for example public Azure or Azure China.
         // The Authority is the sign-in URL of the tenant.
         //
-        private static string aadInstance = "https://login.microsoftonline.com/{0}";
-        private static string tenant = "tkopaczmsE3.onmicrosoft.com";
-        private static string clientId = "a65d7ac7-cd0a-4062-84f3-b98c3db56ccf";
-        private static string appKey = "VqUuPxzUsj+xevmYY4KLQkUiUHcFaKrqLPsNDQRer1s=";
+        private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
+        private static string tenant = ConfigurationManager.AppSettings["ida:Tenant"];
+        private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
+        private static string appKey = ConfigurationManager.AppSettings["ida:AppKey"];
 
         //
         // To authenticate to the Graph API, the app needs to know the Grah API's App ID URI.
         // To contact the Me endpoint on the Graph API we need the URL as well.
         //
-        private static string graphResourceId = "https://graph.windows.net";
-        private static string graphUserUrl = "https://graph.windows.net/{0}/me?api-version=2013-11-08";
+        private static string graphResourceId = ConfigurationManager.AppSettings["ida:GraphResourceId"];
+        private static string graphUserUrl = ConfigurationManager.AppSettings["ida:GraphUserUrl"];
         private const string TenantIdClaimType = "http://schemas.microsoft.com/identity/claims/tenantid";
 
-        public TodoListController(TodoItemContainer container)
-        {
-            m_container = container;
-        }
+        //
+        // To Do items list for all users.  Since the list is stored in memory, it will go away if the service is cycled.
+        //
+        private TodoListServiceContext db = new TodoListServiceContext();
 
-        // GET: api/values
-        [HttpGet]
+
+        // GET api/todolist
         public IEnumerable<TodoItem> Get()
         {
-            string owner = (User.FindFirst(ClaimTypes.NameIdentifier))?.Value;
-            return m_container.TodoStore.Where(t => t.Owner == owner).ToList();
+            //
+            // The Scope claim tells you what permissions the client application has in the service.
+            // In this case we look for a scope value of user_impersonation, or full access to the service as the user.
+            //
+            if (!ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/scope").Value.Contains("user_impersonation"))
+            {
+                throw new HttpResponseException(new HttpResponseMessage { StatusCode = HttpStatusCode.Unauthorized, ReasonPhrase = "The Scope claim does not contain 'user_impersonation' or scope claim not found" });
+            }
+
+            // A user's To Do list is keyed off of the NameIdentifier claim, which contains an immutable, unique identifier for the user.
+            Claim subject = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier);
+
+            return from todo in db.TodoItems
+                   where todo.Owner == subject.Value
+                   select todo;
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]TodoItem Todo)
+        // POST api/todolist
+        public async Task Post(TodoItem todo)
         {
-            string owner = (User.FindFirst(ClaimTypes.NameIdentifier))?.Value;
-            m_container.TodoStore.Add(new TodoItem { Owner = owner, Title = Todo.Title });
+            if (!ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/scope").Value.Contains("user_impersonation"))
+            {
+                throw new HttpResponseException(new HttpResponseMessage { StatusCode = HttpStatusCode.Unauthorized, ReasonPhrase = "The Scope claim does not contain 'user_impersonation' or scope claim not found" });
+            }
+
+            //
+            // Call the Graph API On Behalf Of the user who called the To Do list web API.
+            //
+            string augmentedTitle = null;
+            UserProfile profile = new UserProfile();
+            profile = await CallGraphAPIOnBehalfOfUser();
+            if (profile != null)
+            {
+                augmentedTitle = String.Format("{0}, First Name: {1}, Last Name: {2}", todo.Title, profile.GivenName, profile.Surname);
+            }
+            else
+            {
+                augmentedTitle = todo.Title;
+            }
+
+            if (null != todo && !string.IsNullOrWhiteSpace(todo.Title))
+            {
+                db.TodoItems.Add(new TodoItem { Title = augmentedTitle, Owner = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value });
+                db.SaveChanges();
+            }
         }
+
         public static async Task<UserProfile> CallGraphAPIOnBehalfOfUser()
         {
             UserProfile profile = null;
@@ -84,7 +138,7 @@ namespace TodoListService.Controllers
 
             string authority = String.Format(CultureInfo.InvariantCulture, aadInstance, tenant);
             string userId = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-            AuthenticationContext authContext = new AuthenticationContext(authority, new NaiveSessionCache(userId));
+            AuthenticationContext authContext = new AuthenticationContext(authority, new DbTokenCache(userId));
 
             // In the case of a transient error, retry once after 1 second, then abandon.
             // Retrying is optional.  It may be better, for your application, to return an error immediately to the user and have the user initiate the retry.
@@ -142,11 +196,5 @@ namespace TodoListService.Controllers
             // An unexpected error occurred calling the Graph API.  Return a null profile.
             return (null);
         }
-    }
-    public class UserProfile
-    {
-        public string DisplayName { get; set; }
-        public string GivenName { get; set; }
-        public string Surname { get; set; }
     }
 }
