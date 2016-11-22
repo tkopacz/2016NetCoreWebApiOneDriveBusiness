@@ -181,7 +181,7 @@ namespace TodoListClient
             AuthenticationResult result = null;
             try
             {
-                result = await authContext.AcquireTokenAsync(todoListResourceId, clientId, redirectUri, new PlatformParameters(PromptBehavior.Always));
+                result = await authContext.AcquireTokenAsync(todoListResourceId, clientId, redirectUri, new PlatformParameters(PromptBehavior.Never));
             }
             catch (AdalException ex)
             {
