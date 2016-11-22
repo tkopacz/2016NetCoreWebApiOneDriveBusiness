@@ -163,7 +163,7 @@ namespace TodoListService.Controllers
                         Thread.Sleep(1000);
                     }
                 }
-            } while ((retry == true) && (retryCount < 1));
+            } while ((retry == true) && (retryCount < 3));
 
             if (accessToken == null)
             {
