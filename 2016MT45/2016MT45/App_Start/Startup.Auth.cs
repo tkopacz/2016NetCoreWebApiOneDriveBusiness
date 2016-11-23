@@ -59,6 +59,9 @@ namespace _2016MT45
                             AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(
                                 code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, graphResourceID);
 
+                            result = authContext.AcquireTokenByAuthorizationCode(
+                                code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, "https://graph.microsoft.com");
+
                             return Task.FromResult(0);
                         },
                         AuthenticationFailed = (context) =>

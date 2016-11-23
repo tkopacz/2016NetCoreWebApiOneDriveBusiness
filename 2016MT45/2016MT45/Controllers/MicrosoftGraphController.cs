@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,6 +29,15 @@ namespace _2016MT45.Controllers
             try
             {
                 var accessToken = await GetTokenForApplicationAsync();
+                //REST
+                var clt = new HttpClient();
+                clt.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                clt.BaseAddress = new Uri("https://graph.microsoft.com");
+                var result = await clt.GetAsync("v1.0/me");
+                Debug.WriteLine(await result.Content.ReadAsStringAsync());
+
+
+                //API
                 var graphserviceClient = new GraphServiceClient(
                     new DelegateAuthenticationProvider(
                         (requestMessage) =>
@@ -62,7 +72,7 @@ namespace _2016MT45.Controllers
             ClientCredential clientcred = new ClientCredential(clientId, appKey);
             // initialize AuthenticationContext with the token cache of the currently signed in user, as kept in the app's database
             AuthenticationContext authenticationContext = new AuthenticationContext(aadInstance + tenantID, new ADALTokenCache(signedInUserID));
-            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenSilentAsync(graphResourceID, clientcred, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenSilentAsync("https://graph.microsoft.com" /*check TWICE!*/, clientcred, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
             return authenticationResult.AccessToken;
         }
     }
