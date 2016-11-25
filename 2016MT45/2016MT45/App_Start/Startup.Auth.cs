@@ -45,6 +45,14 @@ namespace _2016MT45
                     },
                     Notifications = new OpenIdConnectAuthenticationNotifications()
                     {
+                        RedirectToIdentityProvider = (context) =>
+                        {
+                            //string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
+                            //context.ProtocolMessage.RedirectUri = appBaseUrl;
+                            //context.ProtocolMessage.PostLogoutRedirectUri= appBaseUrl;
+                            context.ProtocolMessage.Prompt = "admin_consent";
+                            return Task.FromResult(0);
+                        },
                         SecurityTokenValidated = (context) => 
                         {
                             return Task.FromResult(0);

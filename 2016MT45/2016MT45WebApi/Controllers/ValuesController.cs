@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Tokens;
@@ -141,9 +142,22 @@ namespace _2016MT45WebApi.Controllers
             {
                 string responseString = await response.Content.ReadAsStringAsync();
                 profile = JsonConvert.DeserializeObject<UserProfile>(responseString);
-                return (profile);
             }
+            try
+            {
+                result = await authContext.AcquireTokenAsync("https://graph.microsoft.com", clientCred, userAssertion);
+                accessToken = result.AccessToken;
 
+                var clt = new HttpClient();
+                clt.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                clt.BaseAddress = new Uri("https://graph.microsoft.com");
+                var httpresult = await clt.GetAsync("v1.0/me");
+                Debug.WriteLine(await httpresult.Content.ReadAsStringAsync());
+
+            } catch (Exception ex)
+            {
+
+            }
             // An unexpected error occurred calling the Graph API.  Return a null profile.
             return (null);
         }

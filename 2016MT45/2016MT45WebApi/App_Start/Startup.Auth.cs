@@ -24,6 +24,43 @@ namespace _2016MT45WebApi
 
         public void ConfigureAuth(IAppBuilder app)
         {
+            //Login for admin consent
+
+            app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions { });
+
+            app.UseOpenIdConnectAuthentication(
+                new OpenIdConnectAuthenticationOptions
+                {
+                    ClientId = clientId,
+                    Authority = authority,
+                    ResponseType = "code id_token",
+                    TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        // instead of using the default validation (validating against a single issuer value, as we do in line of business apps), 
+                        // we inject our own multitenant validation logic
+                        ValidateIssuer = false,
+                    },
+                    Notifications = new OpenIdConnectAuthenticationNotifications()
+                    {
+                        RedirectToIdentityProvider = (context) =>
+                        {
+                            context.ProtocolMessage.Prompt = "admin_consent";
+                            return Task.FromResult(0);
+                        },
+                        SecurityTokenValidated = (context) =>
+                        {
+                            return Task.FromResult(0);
+                        },
+                        AuthenticationFailed = (context) =>
+                        {
+                            context.OwinContext.Response.Redirect("/Home/Error");
+                            context.HandleResponse(); // Suppress the exception
+                            return Task.FromResult(0);
+                        }
+                    }
+                });
             app.UseWindowsAzureActiveDirectoryBearerAuthentication(
                 new WindowsAzureActiveDirectoryBearerAuthenticationOptions
                 {

@@ -14,5 +14,11 @@ namespace _2016MT45WebApi.Controllers
 
             return View();
         }
+
+        [Authorize]
+        public ActionResult SignUp()
+        {
+            return View();
+        }
     }
 }
