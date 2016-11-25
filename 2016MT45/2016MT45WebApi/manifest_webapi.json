@@ -1,0 +1,279 @@
+﻿{
+  "appId": "710f0954-9f8f-47d3-a8f3-cabe2c192514",
+  "appRoles": [],
+  "availableToOtherTenants": false,
+  "displayName": "2016MT45WebApi",
+  "errorUrl": null,
+  "groupMembershipClaims": null,
+  "homepage": "http://localhost:36577",
+  "identifierUris": [
+    "https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae"
+  ],
+  "keyCredentials": [],
+  "knownClientApplications": [],
+  "logoutUrl": null,
+  "oauth2AllowImplicitFlow": false,
+  "oauth2AllowUrlPathMatching": false,
+  "oauth2Permissions": [
+    {
+      "adminConsentDescription": "Allow the application to access 2016MT45WebApi on behalf of the signed-in user.",
+      "adminConsentDisplayName": "TK Access 2016MT45WebApi",
+      "id": "35880953-ebca-4428-8d0f-445c5e85f986",
+      "isEnabled": true,
+      "type": "User",
+      "userConsentDescription": "Allow the application to access 2016MT45WebApi on your behalf.",
+      "userConsentDisplayName": "Access 2016MT45WebApi",
+      "value": "user_impersonation"
+    }
+  ],
+  "oauth2RequiredPostResponse": false,
+  "objectId": "7b425588-2cb8-4232-a4f2-05a0d8f59451",
+  "passwordCredentials": [],
+  "publicClient": false,
+  "supportsConvergence": false,
+  "replyUrls": [
+    "https://localhost:44308"
+  ],
+  "requiredResourceAccess": [
+    {
+      "resourceAppId": "00000003-0000-0000-c000-000000000000",
+      "resourceAccess": [
+        {
+          "id": "89fe6a52-be36-487e-b7d8-d061c450a026",
+          "type": "Scope"
+        },
+        {
+          "id": "c5ddf11b-c114-4886-8558-8a4e557cd52b",
+          "type": "Scope"
+        },
+        {
+          "id": "88d21fd4-8e5a-4c32-b5e2-4a1c95f34f72",
+          "type": "Scope"
+        },
+        {
+          "id": "afb6c84b-06be-49af-80bb-8f3f77004eab",
+          "type": "Scope"
+        },
+        {
+          "id": "242b9d9e-ed24-4d09-9a52-f43769beb9d4",
+          "type": "Scope"
+        },
+        {
+          "id": "12466101-c9b8-439a-8589-dd09ee67e8e9",
+          "type": "Scope"
+        },
+        {
+          "id": "2b9c4092-424d-4249-948d-b43879977640",
+          "type": "Scope"
+        },
+        {
+          "id": "a367ab51-6b49-43bf-a716-a1fb06d2a174",
+          "type": "Scope"
+        },
+        {
+          "id": "5df07973-7d5d-46ed-9847-1271055cbd51",
+          "type": "Scope"
+        },
+        {
+          "id": "7b9103a5-4610-446b-9670-80643382c1fa",
+          "type": "Scope"
+        },
+        {
+          "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+          "type": "Scope"
+        },
+        {
+          "id": "b4e74841-8e56-480b-be8b-910348b18b4c",
+          "type": "Scope"
+        },
+        {
+          "id": "b340eb25-3456-403f-be2f-af7a0d370277",
+          "type": "Scope"
+        },
+        {
+          "id": "b4e74841-8e56-480b-be8b-910348b18b4c",
+          "type": "Scope"
+        },
+        {
+          "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+          "type": "Scope"
+        },
+        {
+          "id": "7b9103a5-4610-446b-9670-80643382c1fa",
+          "type": "Scope"
+        },
+        {
+          "id": "5df07973-7d5d-46ed-9847-1271055cbd51",
+          "type": "Scope"
+        },
+        {
+          "id": "a367ab51-6b49-43bf-a716-a1fb06d2a174",
+          "type": "Scope"
+        },
+        {
+          "id": "2b9c4092-424d-4249-948d-b43879977640",
+          "type": "Scope"
+        },
+        {
+          "id": "12466101-c9b8-439a-8589-dd09ee67e8e9",
+          "type": "Scope"
+        },
+        {
+          "id": "242b9d9e-ed24-4d09-9a52-f43769beb9d4",
+          "type": "Scope"
+        },
+        {
+          "id": "afb6c84b-06be-49af-80bb-8f3f77004eab",
+          "type": "Scope"
+        },
+        {
+          "id": "88d21fd4-8e5a-4c32-b5e2-4a1c95f34f72",
+          "type": "Scope"
+        },
+        {
+          "id": "c5ddf11b-c114-4886-8558-8a4e557cd52b",
+          "type": "Scope"
+        },
+        {
+          "id": "89fe6a52-be36-487e-b7d8-d061c450a026",
+          "type": "Scope"
+        },
+        {
+          "id": "570282fd-fa5c-430d-a7fd-fc8dc98a9dca",
+          "type": "Scope"
+        },
+        {
+          "id": "024d486e-b451-40bb-833d-3e66d98c5c73",
+          "type": "Scope"
+        },
+        {
+          "id": "e383f46e-2787-4529-855e-0e479a3ffac0",
+          "type": "Scope"
+        },
+        {
+          "id": "465a38f9-76ea-45b9-9f34-9e8b0d4b0b42",
+          "type": "Scope"
+        },
+        {
+          "id": "1ec239c2-d7c9-4623-a91a-a9775856bb36",
+          "type": "Scope"
+        },
+        {
+          "id": "ff74d97f-43af-4b68-9f2a-b77ee6968c5d",
+          "type": "Scope"
+        },
+        {
+          "id": "d56682ec-c09e-4743-aaf4-1a3aac4caa21",
+          "type": "Scope"
+        },
+        {
+          "id": "10465720-29dd-4523-a11a-6a75c743c9d9",
+          "type": "Scope"
+        },
+        {
+          "id": "5c28f0bf-8a70-41f1-8ab2-9032436ddb65",
+          "type": "Scope"
+        },
+        {
+          "id": "df85f4d6-205c-4ac5-a5ea-6bf408dba283",
+          "type": "Scope"
+        },
+        {
+          "id": "863451e7-0667-486c-a5d6-d135439485f0",
+          "type": "Scope"
+        },
+        {
+          "id": "8019c312-3263-48e6-825e-2b833497195b",
+          "type": "Scope"
+        },
+        {
+          "id": "17dde5bd-8c17-420f-a486-969730c1b827",
+          "type": "Scope"
+        },
+        {
+          "id": "5447fe39-cb82-4c1a-b977-520e67e724eb",
+          "type": "Scope"
+        },
+        {
+          "id": "205e70e5-aba6-4c52-a976-6d2d46c48043",
+          "type": "Scope"
+        },
+        {
+          "id": "37f7f235-527c-4136-accd-4a02d197296e",
+          "type": "Scope"
+        },
+        {
+          "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+          "type": "Scope"
+        },
+        {
+          "id": "ba47897c-39ec-4d83-8086-ee8256fa737d",
+          "type": "Scope"
+        },
+        {
+          "id": "9d822255-d64d-4b7a-afdb-833b9a97ed02",
+          "type": "Scope"
+        },
+        {
+          "id": "ed68249d-017c-4df5-9113-e684c7f8760b",
+          "type": "Scope"
+        },
+        {
+          "id": "371361e4-b9e2-4a3f-8315-2a301a3b0a3d",
+          "type": "Scope"
+        },
+        {
+          "id": "615e26af-c38a-4150-ae3e-c3b0d4cb1d6a",
+          "type": "Scope"
+        },
+        {
+          "id": "dfabfca6-ee36-4db2-8208-7a28381419b3",
+          "type": "Scope"
+        },
+        {
+          "id": "64ac0503-b4fa-45d9-b544-71a463f05da0",
+          "type": "Scope"
+        },
+        {
+          "id": "f45671fb-e0fe-4b4b-be20-3d3ce43f1bcb",
+          "type": "Scope"
+        },
+        {
+          "id": "2219042f-cab5-40cc-b0d2-16b1540b4c5f",
+          "type": "Scope"
+        },
+        {
+          "id": "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0",
+          "type": "Scope"
+        },
+        {
+          "id": "14dad69e-099b-42c9-810b-d002981feec1",
+          "type": "Scope"
+        },
+        {
+          "id": "818c620a-27a9-40bd-a6a5-d96f7d610b4b",
+          "type": "Scope"
+        }
+      ]
+    },
+    {
+      "resourceAppId": "00000002-0000-0000-c000-000000000000",
+      "resourceAccess": [
+        {
+          "id": "311a71cc-e848-46a1-bdf8-97ff7156d8e6",
+          "type": "Scope"
+        },
+        {
+          "id": "cba73afc-7f69-4d86-8450-4978e04ecd1a",
+          "type": "Scope"
+        },
+        {
+          "id": "a42657d6-7f20-40e3-b6f0-cee03008a62a",
+          "type": "Scope"
+        }
+      ]
+    }
+  ],
+  "samlMetadataUrl": null,
+  "appMetadata": null
+}

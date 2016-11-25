@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.25914.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2016MT45", "2016MT45\2016MT45.csproj", "{EEF08D13-B627-4559-9F82-8A34127E6D60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2016MT45WebApi", "2016MT45WebApi\2016MT45WebApi.csproj", "{D73FB618-4481-496B-BC23-C65A9AD6BFE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EEF08D13-B627-4559-9F82-8A34127E6D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEF08D13-B627-4559-9F82-8A34127E6D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEF08D13-B627-4559-9F82-8A34127E6D60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73FB618-4481-496B-BC23-C65A9AD6BFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73FB618-4481-496B-BC23-C65A9AD6BFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73FB618-4481-496B-BC23-C65A9AD6BFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73FB618-4481-496B-BC23-C65A9AD6BFE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

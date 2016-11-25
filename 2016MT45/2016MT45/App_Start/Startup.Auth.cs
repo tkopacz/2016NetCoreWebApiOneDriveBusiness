@@ -18,10 +18,11 @@ namespace _2016MT45
     {
         private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
         private string appKey = ConfigurationManager.AppSettings["ida:ClientSecret"];
-        private string graphResourceID = "https://graph.windows.net";
         private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
         private string authority = aadInstance + "common";
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        public string ResponseType { get; private set; }
 
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -35,6 +36,7 @@ namespace _2016MT45
                 {
                     ClientId = clientId,
                     Authority = authority,
+                    ResponseType = "code id_token",
                     TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
                     {
                         // instead of using the default validation (validating against a single issuer value, as we do in line of business apps), 
@@ -56,11 +58,21 @@ namespace _2016MT45
                             string signedInUserID = context.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                             AuthenticationContext authContext = new AuthenticationContext(aadInstance + tenantID, new ADALTokenCache(signedInUserID));
+                            var redirectUri = new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path));
+                            //Graph
                             AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(
-                                code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, graphResourceID);
+                                code, redirectUri, credential, "https://graph.windows.net");
+                            
+                            //Microsoft Graph
+                            result = authContext.AcquireTokenByAuthorizationCode(
+                                code, redirectUri, credential, "https://graph.microsoft.com");
+
+                            //Our WebAPI:
+                            //https://localhost:44308/
+                            //But ID: https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae
 
                             result = authContext.AcquireTokenByAuthorizationCode(
-                                code, new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)), credential, "https://graph.microsoft.com");
+                                code, redirectUri, credential, "https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae");
 
                             return Task.FromResult(0);
                         },
