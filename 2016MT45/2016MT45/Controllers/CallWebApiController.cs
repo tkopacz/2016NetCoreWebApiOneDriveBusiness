@@ -47,14 +47,11 @@ namespace _2016MT45.Controllers
             AuthenticationContext authenticationContext = new AuthenticationContext(aadInstance + tenantID, new ADALTokenCache(signedInUserID));
 
 
-            AuthenticationResult authenticationResult = await authenticationContext.AcquireTokenSilentAsync("https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae" /*check TWICE!*/, clientcred, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
+            AuthenticationResult authenticationResult = await 
+                authenticationContext.AcquireTokenSilentAsync(
+                    "https://tkopaczmsE3.onmicrosoft.com/eef85c5a-61d4-46c0-b27e-e354c57ca071" /*check TWICE!*/, 
+                    clientcred, new UserIdentifier(userObjectID, UserIdentifierType.UniqueId));
             return authenticationResult.AccessToken;
-
-            //result = authContext.AcquireToken(
-            //    "https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae",
-            //    clientId, redirectUri, PromptBehavior.Auto
-            //        );
-
         }
 
     }

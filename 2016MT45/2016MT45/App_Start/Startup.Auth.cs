@@ -69,10 +69,10 @@ namespace _2016MT45
 
                             //Our WebAPI:
                             //https://localhost:44308/
-                            //But ID: https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae
+                            //But ID: https://tkopaczmsE3.onmicrosoft.com/eef85c5a-61d4-46c0-b27e-e354c57ca071
 
                             result = authContext.AcquireTokenByAuthorizationCode(
-                                code, redirectUri, credential, "https://tkopaczmsE3.onmicrosoft.com/b3222e5a-129a-463a-9c5e-26d8687866ae");
+                                code, redirectUri, credential, "https://tkopaczmsE3.onmicrosoft.com/eef85c5a-61d4-46c0-b27e-e354c57ca071");
 
                             return Task.FromResult(0);
                         },
