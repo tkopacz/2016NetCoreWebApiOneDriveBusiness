@@ -47,10 +47,10 @@ namespace _2016MT45
                     {
                         RedirectToIdentityProvider = (context) =>
                         {
-                            //string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase;
-                            //context.ProtocolMessage.RedirectUri = appBaseUrl;
-                            //context.ProtocolMessage.PostLogoutRedirectUri= appBaseUrl;
-                            context.ProtocolMessage.Prompt = "admin_consent";
+                            string appBaseUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase + "/";
+                            context.ProtocolMessage.RedirectUri = appBaseUrl;
+                            context.ProtocolMessage.PostLogoutRedirectUri = appBaseUrl;
+                            //context.ProtocolMessage.Prompt = "user_consent";
                             return Task.FromResult(0);
                         },
                         SecurityTokenValidated = (context) => 
@@ -66,7 +66,11 @@ namespace _2016MT45
                             string signedInUserID = context.AuthenticationTicket.Identity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                             AuthenticationContext authContext = new AuthenticationContext(aadInstance + tenantID, new ADALTokenCache(signedInUserID));
+                            //Strip last /
+                            //var tmpstr = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path);
+                            //tmpstr = tmpstr.Substring(0, tmpstr.Length - 1);
                             var redirectUri = new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path));
+                            
                             //Graph
                             AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(
                                 code, redirectUri, credential, "https://graph.windows.net");
