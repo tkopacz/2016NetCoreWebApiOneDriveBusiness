@@ -25,7 +25,18 @@ namespace _2016MT45WebApi.Models
             // look up the entry in the database
             Cache = db.UserTokenCacheList.FirstOrDefault(c => c.webUserUniqueId == userId);
             // place the entry in memory
-            this.Deserialize((Cache == null) ? null : MachineKey.Unprotect(Cache.cacheBits,"ADALCache"));
+            try
+            {
+                this.Deserialize((Cache == null) ? null : MachineKey.Unprotect(Cache.cacheBits, "ADALCache"));
+            } catch
+            {
+                //Upps - another machine etc
+                foreach (var item in db.UserTokenCacheList)
+                {
+                    db.UserTokenCacheList.Remove(item);
+                }
+                db.SaveChanges();
+            }
         }
 
         // clean up the database
